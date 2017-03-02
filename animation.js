@@ -4,12 +4,13 @@ canvas.height = document.body.scrollHeight;
 var ctx = canvas.getContext("2d");
 var background 	= "#FFFFFF";
 var blobColor	= "#3533FF";
+var maxSize = 75;
 
 console.log(Math.random() * canvas.width);
 
 var blobs = [];
-for (var i = 0; i < 10; i++) {
-	blobs.push(new Blob(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() / 1.3, Math.random() / 1.3, Math.random() * 40 + 5));
+for (var i = 0; i < 100; i++) {
+	blobs.push(new Blob(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * maxSize + 2));
 }
 
 function loop() {
@@ -21,13 +22,8 @@ function loop() {
 
 // update asset positions and animation frames
 function update() {
+	
 	for (var i = 0; i < blobs.length; i++) {
-
-		// detect collisions
-		for (var j = 0; j < blobs.length; j++) {
-			distance = Math.pow(Math.pow((blobs[i].x - blobs[j].x), 2) + Math.pow((blobs[i].y - blobs[j].y), 2), 0.5);
-		}
-
 		blobs[i].update(canvas);
 	}
 }
@@ -40,14 +36,18 @@ function draw() {
 }
 
 // define blob object that will move about the canvas
-function Blob(initX, initY, initXVelocity, initYVelocity, initSize) {
+function Blob(initX, initY, initSize) {
 	this.x = initX;
 	this.y = initY;
 	this.size = initSize;
 
+	var velocity = 1 - this.size / maxSize + 0.15;
+	velocity /= 1.5;
+	var angle = Math.random() * 2 * Math.PI;
+
 	this.velocity = {
-		x: initXVelocity,
-		y: initYVelocity
+		x: velocity * Math.sin(angle),
+		y: velocity * Math.cos(angle)
 	};
 
 	this.update = function(canvas) {
